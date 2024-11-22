@@ -1,0 +1,129 @@
+-- Criação das tabelas
+
+-- Tabela curso
+CREATE TABLE curso (
+    id_curso INT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    descricao TEXT
+);
+
+-- Tabela professor
+CREATE TABLE professor (
+    id_professor INT PRIMARY KEY,
+    cpf CHAR(11) UNIQUE NOT NULL, -- CPF com 11 dígitos numéricos
+    telefone VARCHAR(15), -- Telefone com 10 ou 11 dígitos
+    email VARCHAR(255) UNIQUE NOT NULL, -- Email válido
+    nome VARCHAR(100) NOT NULL
+);
+
+-- Tabela turma
+CREATE TABLE turma (
+    id_turma INT PRIMARY KEY,
+    nome VARCHAR(50) NOT NULL
+);
+
+-- Tabela aluno
+CREATE TABLE aluno (
+    id_aluno INT PRIMARY KEY,
+    logradouro VARCHAR(100) NOT NULL,
+    cep CHAR(9) NOT NULL, -- Formato de CEP
+    numero VARCHAR(10),
+    bairro VARCHAR(50),
+    cidade VARCHAR(50) NOT NULL,
+    estado CHAR(2) NOT NULL, -- Estados válidos
+    pais VARCHAR(50) DEFAULT 'Brasil',
+    email VARCHAR(255) UNIQUE NOT NULL,
+    telefone VARCHAR(15),
+    cpf CHAR(11) UNIQUE NOT NULL, -- CPF com 11 dígitos
+    nome VARCHAR(100) NOT NULL,
+    id_turma INT,
+    FOREIGN KEY (id_turma) REFERENCES turma(id_turma)
+);
+
+-- Tabela nota
+CREATE TABLE nota (
+    id_nota INT PRIMARY KEY,
+    nota DECIMAL(5, 2) NOT NULL CHECK (nota >= 0 AND nota <= 10) -- Nota entre 0 e 10
+);
+
+-- Tabela faz (relação aluno-curso)
+CREATE TABLE faz (
+    id_curso INT,
+    id_aluno INT,
+    PRIMARY KEY (id_curso, id_aluno),
+    FOREIGN KEY (id_curso) REFERENCES curso(id_curso),
+    FOREIGN KEY (id_aluno) REFERENCES aluno(id_aluno)
+);
+
+-- Tabela leciona (relação professor-curso)
+CREATE TABLE leciona (
+    id_curso INT,
+    id_professor INT,
+    PRIMARY KEY (id_curso, id_professor),
+    FOREIGN KEY (id_curso) REFERENCES curso(id_curso),
+    FOREIGN KEY (id_professor) REFERENCES professor(id_professor)
+);
+
+-- Tabela tem (relação aluno-nota)
+CREATE TABLE tem (
+    id_aluno INT,
+    id_nota INT,
+    PRIMARY KEY (id_aluno, id_nota),
+    FOREIGN KEY (id_aluno) REFERENCES aluno(id_aluno),
+    FOREIGN KEY (id_nota) REFERENCES nota(id_nota)
+);
+
+-- Tabela avalia (relação professor-nota)
+CREATE TABLE avalia (
+    id_nota INT,
+    id_professor INT,
+    PRIMARY KEY (id_nota, id_professor),
+    FOREIGN KEY (id_nota) REFERENCES nota(id_nota),
+    FOREIGN KEY (id_professor) REFERENCES professor(id_professor)
+);
+
+-- Tabela curso_turma (relação curso-turma)
+CREATE TABLE curso_turma (
+    id_curso INT,
+    id_turma INT,
+    PRIMARY KEY (id_curso, id_turma),
+    FOREIGN KEY (id_curso) REFERENCES curso(id_curso),
+    FOREIGN KEY (id_turma) REFERENCES turma(id_turma)
+);
+
+-- Inserção de dados
+
+-- Cursos
+INSERT INTO curso (id_curso, nome, descricao)
+VALUES
+(1, 'Biologia', 'Estudo das ciências biológicas'),
+(2, 'Direito', 'Estudo das ciências jurídicas'),
+(3, 'Pedagogia', 'Estudo das práticas educacionais');
+
+-- Professores
+INSERT INTO professor (id_professor, cpf, telefone, email, nome)
+VALUES
+(1, '12345678901', '11987654321', 'prof1@universidade.edu', 'Prof. Ana'),
+(2, '23456789012', '11976543210', 'prof2@universidade.edu', 'Prof. João'),
+(3, '34567890123', '11965432109', 'prof3@universidade.edu', 'Prof. Maria');
+
+-- Turmas
+INSERT INTO turma (id_turma, nome)
+VALUES
+(1, 'Turma 1'),
+(2, 'Turma 2'),
+(3, 'Turma 3');
+
+-- Alunos
+INSERT INTO aluno (id_aluno, logradouro, cep, numero, bairro, cidade, estado, pais, email, telefone, cpf, nome, id_turma)
+VALUES
+(1, 'Rua A', '12345-678', '10', 'Centro', 'São Paulo', 'SP', 'Brasil', 'aluno1@universidade.edu', '11912345678', '45678901234', 'Carlos da Silva', 1),
+(2, 'Rua B', '23456-789', '20', 'Bela Vista', 'Rio de Janeiro', 'RJ', 'Brasil', 'aluno2@universidade.edu', '21987654321', '56789012345', 'Fernanda Alves', 2),
+(3, 'Rua C', '34567-890', '30', 'Liberdade', 'Curitiba', 'PR', 'Brasil', 'aluno3@universidade.edu', '41976543210', '67890123456', 'Gabriel Souza', 3);
+
+-- Notas
+INSERT INTO nota (id_nota, nota)
+VALUES
+(1, 9.5),
+(2, 8.7),
+(3, 7.2);
